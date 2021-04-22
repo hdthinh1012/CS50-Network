@@ -1,2 +1,2 @@
 # Network
-Project 4 Web CS Tut
+Project 4 Web CS50 Tut
