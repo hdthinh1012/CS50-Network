@@ -1,0 +1,79 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Social Network{% endblock %}</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="{% static 'network/styles.css' %}" rel="stylesheet">
+        {% block script %}
+        {% endblock %}
+    </head>
+    <body>
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                <ul class="navbar-nav mr-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                    <a class="nav-link" id="all-btn">All Posts</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" id="follow-btn">Following</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-btn">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <div class="mx-auto order-0">            
+                <a class="navbar-brand" href="#">Network</a>
+            </div>
+
+            <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                <ul class="navbar-nav ml-auto">
+                    <form class="nav-item" id="search-form">
+                        {% csrf_token %} 
+                        <input class="nav-link rounded border" id="search-input" type="text" placeholder="Search user, title, etc...">
+                        <input type="submit" class="hidden-btn">
+                    </form>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-1 col-sm-0">
+                    {% block left-col %}
+                    {% endblock%}
+                </div>
+                <div class="col-lg-2 col-sm-0"></div>
+                <div class="body col-lg-6 col-sm-8">
+                    {% block body %}
+                    {% endblock %}
+                </div>
+                <div class="col-lg-3 col-sm-4">
+                    {% block right-col %}
+                    {% endblock%}
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
