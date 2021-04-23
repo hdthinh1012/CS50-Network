@@ -6,7 +6,7 @@ Project 4 Web Django Tutorial
 ## Requirement: 
 Create python virtual machine in project directory
 ```
-python3 -m venv /path/to/new/virtual/environment
+virtualenv -p python3 envname
 ```
 ## Run command:
 ```
