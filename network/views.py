@@ -7,7 +7,6 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import json
-import base64
 from django.views.generic import ListView
 from django.core.paginator import Paginator
 import datetime

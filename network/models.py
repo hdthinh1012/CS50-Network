@@ -83,7 +83,7 @@ class ChatBox(models.Model):
     def serialize(self):
         return {
             'users': [user.serialize() for user in self.users.all()],
-            'messages': [message.serialize() for message in self.all_messages.order_by("-timestamp").all()[:6]],
+            'messages': [message.serialize() for message in self.all_messages.order_by("-timestamp").all()[:10]],
         }
     
     
