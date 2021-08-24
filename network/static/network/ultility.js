@@ -40,20 +40,29 @@ function setStyleDisplay(form_post, all_posts, follow_posts, profile_posts, prof
 
 function rollBackHistory(event){
     let id = parseInt(event.state.id);
-    // console.log(id);
     if (id == 1){
+        /* Roll back to after clikcing all-button event, means showing all posts
+         */
         loadViews('all-posts', default_page_id);
     }
     else if(id == 2){
+        /* Roll back to after clikcing all-button event, means showing posts of followed user
+         */
         loadViews('follow-posts', default_page_id);
     }
-    else if(id == 3){                                           
+    else if(id == 3){      
+        /* Roll back to after clikcing profile-button event, means showing the request user profile page
+         */                                     
         loadViews('profile-posts', default_page_id);
     }
     else if(id == 4){
+        /* Roll back to after follow-button event, means showing the other user profile page
+         */
         loadViews('profile-posts', default_page_id ,parseInt(event.state.user_id));
     }
     else if(id == 5){
+        /* Roll back to after paginator-button event, means showing the page after clicking the previous/next button for all type of posts
+         */
         if(event.state.kwargs){
             loadViews(event.state.type_post, event.state.page_current, event.state.kwargs);
         }
@@ -62,6 +71,8 @@ function rollBackHistory(event){
         }
     }
     else if(id == 6){
+        /* Roll back to after like-button event, means showing the same type-posts page, in the same page number
+         */
         loadViews(event.state.type_post, event.state.page_current);
     }
     else{
@@ -203,28 +214,29 @@ function submitComment(evt, div_post, post, type_post, page_current){
 }
 
 
-//Set onclick attribue for paginator buttons to change page list
-// kwargs[0] could be user_id for 'profile-posts' or query_search for ''
+/*Set onclick attribue for paginator buttons to change page list
+ * kwargs[0] could be user_id for 'profile-posts' or query_search for 'search-posts'
+ */
 function setPaginator(type_post, page_current, page_count, ...kwargs){
     if (page_current >= page_count){
         document.querySelector("#next-page").classList.add("disabled");
         document.querySelector("#next-page").onclick = '';
     }
     else{
-        // Click next-page btn load next post-list in paginator list
+        /* Click next-page btn load next post-list in paginator list */
         const next_page = page_current + 1;
         document.querySelector("#next-page").classList.remove("disabled");
         if(kwargs.length == 0){
             document.querySelector("#next-page").onclick = () => {
-                console.log(kwargs);
+                /* history.pushState() pushes the state of the incoming page in application, so that when back button is clicked, 
+                 * the page above it is poped out and this event (now is located at the top of the stack) is retrieved and display
+                 */      
                 window.history.pushState({id: '5', type_post, page_current: next_page}, "", "page.html");
-                loadViews(type_post, next_page);
+                loadViews(type_post, next_page);        
             };
         }
         else{
-            kwargs = kwargs[0];
             document.querySelector("#next-page").onclick = () => {
-                console.log(kwargs);
                 window.history.pushState({id: '5', type_post, page_current: next_page, kwargs}, "", "page.html");
                 loadViews(type_post, next_page, kwargs);
             };
@@ -245,7 +257,6 @@ function setPaginator(type_post, page_current, page_count, ...kwargs){
             };
         }
         else{
-            console.log(kwargs);
             document.querySelector("#previous-page").onclick = () => {
                 window.history.pushState({id: '5', type_post, page_current: previous_page, kwargs}, "", "page.html");
                 loadViews(type_post, previous_page, kwargs);
@@ -315,6 +326,7 @@ function displayChatBox(chat_box_info, user_id, user, request_user_id, request_u
         }
     }
 
+    // User type and submit chat in chatbox forms
     chatbox.querySelector(".chat-form").onsubmit = function(event){
         event.preventDefault();
         fetchSendMessage(user_id, request_user_id, chatbox)

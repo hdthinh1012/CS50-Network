@@ -8,32 +8,24 @@ document.addEventListener('DOMContentLoaded', () => {
 history.replaceState({id: null}, "", "")
 
 
-// Pop current state, event.state is the new current state left on stack having info passing when calling pushState
+/* Pop current state, event.state is the new current state left on stack having info passing when calling pushState
+ */
 window.addEventListener("popstate", event => {
+    /* event is the previous event now to be showed, the event which is left on the top of the stack, not the one popped out of the stack
+     */
     rollBackHistory(event);
 })
 
 
-// page_id represents the index of paginator list, display the right page element, default_page_id = 1
-// kwargs: only one element, user_id for 'profile-posts', query_string for 'search-posts' 
+/* page_id represents the index of paginator list, display the right page element, default_page_id = 1
+ * kwargs: only one element, user_id in case of 'profile-posts', query_string in case of 'search-posts'
+ */ 
 function loadViews(type_post, page_id, ...kwargs){
-    if(type_post == 'all-posts'){
-        while (document.querySelector("#all-posts").firstChild) {
-            document.querySelector("#all-posts").firstChild.remove();
-        }
-        setStyleDisplay('block', 'block', 'none', 'none', 'none', 'none');
-    }
-    else if(type_post == 'follow-posts'){
-        while (document.querySelector("#follow-posts").firstChild) {
-            document.querySelector("#follow-posts").firstChild.remove();
-        }
-        setStyleDisplay('none', 'none', 'block', 'none', 'none', 'none');
-        document.querySelector('#follow-posts').style.display = 'block';
-    }
-    else if(type_post == 'profile-posts'){
+    if(type_post == 'profile-posts'){
         while (document.querySelector("#profile-posts").firstChild) {
             document.querySelector("#profile-posts").firstChild.remove();
         }
+        setStyleDisplay('none', 'none', 'none', 'block', 'block', 'none')
         let user_id = (kwargs.length == 0) ? document.querySelector('#request-user-id').value : kwargs[0];
         viewProfile(user_id);
         viewPosts(type_post, page_id, user_id);
@@ -47,12 +39,24 @@ function loadViews(type_post, page_id, ...kwargs){
         viewSearch(page_id, kwargs[0]);
         return false;
     }
+    else if(type_post == 'all-posts'){
+        while (document.querySelector("#all-posts").firstChild) {
+            document.querySelector("#all-posts").firstChild.remove();
+        }
+        setStyleDisplay('block', 'block', 'none', 'none', 'none', 'none');
+    }
+    else if(type_post == 'follow-posts'){
+        while (document.querySelector("#follow-posts").firstChild) {
+            document.querySelector("#follow-posts").firstChild.remove();
+        }
+        setStyleDisplay('none', 'none', 'block', 'none', 'none', 'none');
+        document.querySelector('#follow-posts').style.display = 'block';
+    }
     else{
         console.log("Wrong type post");
     }
     viewPosts(type_post, page_id);
 }
-
 
 
 function viewSearch(page_id, search_query){
@@ -77,14 +81,13 @@ function viewSearch(page_id, search_query){
 
 
 function viewProfile(user_id){
-    // Deleted all preloaded older user's profile posts for new user's profile posts
-    setStyleDisplay('none', 'none', 'none', 'block', 'block', 'none')
+    /* Deleted all preloaded older user's profile posts for new user's profile posts */
     let parent = document.querySelector("#profile-posts");
     while (parent.firstChild) {
         parent.firstChild.remove();
     }
 
-    // Enable edit image button if request_user open request_user's profile page
+    /* Enable edit image button if request_user open request_user's profile page */
     let request_user_id = document.querySelector('#request-user-id').value;
     document.querySelector('.edit-user-image-btn').style.display = (request_user_id == user_id) ? 'block' : 'none';
     document.querySelector('.edit-user-image').style.display = 'none';
@@ -97,7 +100,7 @@ function viewProfile(user_id){
         };
     };
 
-    // Fetch get user info in JSON format
+    /* Fetch get user info in JSON format */
     fetchUserInfo(user_id)
     .then(user => {
         document.querySelector('.profile-username').innerHTML = `Username: ${user.username}`;
@@ -105,7 +108,6 @@ function viewProfile(user_id){
         document.querySelector('.profile-follow').innerHTML = `Followed by ${user.followers.length} people, follow ${user.follow.length} people`;
         document.querySelector(".user-image").src = `${user.image_url}`;
  
-        // Enable follow/unfollow btn in profile page that is not request_user's one
         let request_user = document.querySelector('#request-user').value;
         let request_user_id = document.querySelector('#request-user-id').value;
         document.querySelector('.open-chat-btn').style.display = 'none';
@@ -113,11 +115,14 @@ function viewProfile(user_id){
             document.querySelector('.follow-user-btn').style.display = 'none';
             document.querySelector('.friend-request-btn').style.display = 'none';
         }
+        /* Enable follow/unfollow button and friend/unfriend request/cancel request button in profile page that is not request_user's one */
         else{
             document.querySelector('.follow-user-btn').style.display = 'inline';
             document.querySelector('.follow-user-btn').innerHTML = (user.followers.includes(request_user)) ? "Unfollow" : "Follow";
             document.querySelector('.friend-request-btn').style.display = 'inline';
             let user_friends_username_list = user.friends.map(friend => friend.username);
+
+            /* Enable open chat button if the request_user's username is in this user's friend list */
             if (user_friends_username_list.includes(request_user)){
                 document.querySelector('.friend-request-btn').innerHTML = "Unfriend";
                 document.querySelector('.open-chat-btn').style.display = 'inline';

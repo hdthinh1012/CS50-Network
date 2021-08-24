@@ -3,7 +3,7 @@
 
 
 
-{% comment %} {% block left-col %}
+{% block left-col %}
 <div class="card left-col-card my-1 overflow-auto" style="width: 15rem;">
     <img class="card-img-top" src="{{weather_image_url}}" alt="Card image cap">
     <div class="card-body weather-details">
@@ -18,7 +18,13 @@
     </form>
     <a class="card-btn btn btn-primary change-location-btn">Change Location</a>
 </div>
-{% endblock %} {% endcomment %}
+{% endblock %}
+
+
+
+
+
+
 
 
 
@@ -52,6 +58,7 @@
 </div>
 
 
+{% comment %} Copy post prototype from the internet {% endcomment %}
 {% comment %} Indivual Post Blue Print {% endcomment %}
 <div id="post-stereotype" class="container">
     <div class="post-element border rounded card">
@@ -83,7 +90,6 @@
         </div>
         <hr>
 
-
         <div class="comment-views">
             <div class="comment-element border">
                 <div class="comment-header"></div>
@@ -99,6 +105,7 @@
     </div>
 </div>
 {% comment %} The above element get queried in inbox.js and cloneNode to multiple post {% endcomment %}
+{% comment %} Copy post prototype from the internet {% endcomment %}
 
 
 {% comment %} Profile display generaot {% endcomment %}
@@ -127,7 +134,6 @@
         <textarea type='textarea' id="content-form" placeholder="Write Your Though" class="form-control" label="" rows="2"></textarea>
         <p><input type="file" id="image-form" name="image" enctype="multipart/form-data" accept="image/png, image/jpeg"></p>
         <p><input class="btn btn-outline-primary" type='submit' value="Post" id="post-form-btn"></p>
-        </form> 
     </form>
 </div>
 
@@ -152,6 +158,16 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 {% block right-col %}
 <div>Friend Request</div>
 <div class="message-col"></div>
@@ -160,6 +176,8 @@
 <div class="friend-list">
 </div>
 
+
+{% comment %} Chat bubble copy from internet {% endcomment %}
 <div id="chat-bubble">
     <div class="chat-container">
         <div class="chat-header">
@@ -169,6 +187,7 @@
         </div>
     </div>
 
+    {% comment %} The chat body displaying each message div below {% endcomment %}
     <div class="chat-body">
     </div>
 
@@ -182,6 +201,7 @@
         <div class="my-message"></div>
     </div>
 
+    {% comment %} Message form bar for typing {% endcomment %}
     <div class="chat-footer">
         <form class="chat-form">
             <input class="chat-content" type="textarea" placeholder="Type a message...">
@@ -191,6 +211,8 @@
         </div>
     </div>
 </div>
+ {% comment %} Chat bubble copy from internet {% endcomment %}
+
 
 {% comment %} Request Message Generator {% endcomment %}
 <div class="friend-request-message border rounded p-2 m-1 d-none">
@@ -198,7 +220,6 @@
     <div class="accept-request-btn d-inline btn btn-outline-primary">Accept</div>
     <div class="decline-request-btn d-inline btn btn-outline-primary">Decline</div>
 <div>
-
 {% endblock %}
 
 

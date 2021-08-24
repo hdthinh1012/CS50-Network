@@ -1,7 +1,7 @@
 async function fetchSearchQuery(page_id, search_query){
-    let response = await fetch(`/search_query/${search_query}/${page_id}`)
-    let search_result = await response.json()
-    return search_result;   
+let response = await fetch(`/search_query/${search_query}/${page_id}`)
+let search_result = await response.json()
+return search_result;   
 }
 
 async function fetchUserInfo(user_id){

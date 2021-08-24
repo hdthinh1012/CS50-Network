@@ -32,7 +32,7 @@ class PostCreateForm(forms.ModelForm):
 
 @csrf_exempt
 @login_required(login_url="login")
-def edit_user_image(request):
+def editUserImage(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400) 
     else:
@@ -48,7 +48,7 @@ def edit_user_image(request):
     
 
 @csrf_exempt
-def search_query(request, query, page_number):
+def searchQuery(request, query, page_number):
     users = User.objects.all()
     posts = Post.objects.all()
     queries = []
@@ -56,7 +56,6 @@ def search_query(request, query, page_number):
         if query.lower() in user.username.lower():
             queries.append(user)
     for post in posts:
-        print(post.title)
         if query.lower() in post.title.lower():
             queries.append(post)
     page_number = int(page_number)
@@ -67,7 +66,7 @@ def search_query(request, query, page_number):
     
 @csrf_exempt
 @login_required(login_url="login")
-def edit_user_image_fetch(request):
+def editUserImageFetch(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400) 
     else:
@@ -90,7 +89,7 @@ def index(request):
 
 @csrf_exempt
 @login_required(login_url="login")
-def create_post(request):
+def createPost(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)   
     timestamp = datetime.datetime.now()
@@ -108,7 +107,7 @@ def create_post(request):
 
 @csrf_exempt
 @login_required(login_url="login")
-def delete_post(request, post_id):
+def deletePost(request, post_id):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400) 
     post = Post.objects.get(pk=post_id)
@@ -118,7 +117,7 @@ def delete_post(request, post_id):
 
 @csrf_exempt
 @login_required(login_url="login")
-def edit_post(request):
+def editPost(request):
     if request.method == "POST":
         data = json.loads(request.body)
         post_id = data.get("id","")
@@ -150,7 +149,7 @@ def edit_post(request):
 
 page_length = 2
 @login_required(login_url="login")
-def get_posts(request, post_type, page_number, user_id = ""):
+def getPosts(request, post_type, page_number, user_id = ""):
     if post_type=="all-posts":
         posts = Post.objects.order_by("-timestamp").all()
     elif post_type=="follow-posts":
@@ -168,15 +167,15 @@ def get_posts(request, post_type, page_number, user_id = ""):
 
 @csrf_exempt
 @login_required(login_url="login")
-def get_user(request, user_id):
+def getUser(request, user_id):
     if request.method == "GET":
+        # Lower performance than try except with get()
         try:
             user = User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return JsonResponse({"error": "User not exist"}, status=201)
         user_info = user.serialize()
         
-        # Low performance than try except with get()
         friendRequest = FriendRequest.objects.filter(requestor=request.user, requested=user).first()
         user_info['isFriendRequestSend'] = friendRequest != None
         return JsonResponse(user_info, safe=False)
@@ -200,7 +199,7 @@ def get_user(request, user_id):
 
 @csrf_exempt
 @login_required(login_url="login") 
-def create_comment(request):
+def createComment(request):
     if request.method != "POST":
         return JsonResponse({"error": "Must be POST request"}, status=400)
     data = json.loads(request.body)
@@ -215,7 +214,7 @@ def create_comment(request):
 
 @csrf_exempt
 @login_required(login_url="login")
-def toggle_friend_request(request, requestor_id, requested_id):
+def toggleFriendRequest(request, requestor_id, requested_id):
     if request.method != "PUT":
         return JsonResponse({"error": "Must be PUT request"}, status=400)
     data = json.loads(request.body)
@@ -233,7 +232,7 @@ def toggle_friend_request(request, requestor_id, requested_id):
 
 @csrf_exempt
 @login_required(login_url="login")
-def friend_request_reply(request):
+def friendRequestReply(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST method required"}, status=400)
     data = json.loads(request.body)
@@ -256,7 +255,7 @@ def friend_request_reply(request):
 
 @csrf_exempt
 @login_required(login_url="login")
-def unfriend_request(request):
+def unfriendRequest(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST method required"}, status=400)
     data = json.loads(request.body)
@@ -271,7 +270,7 @@ def unfriend_request(request):
 
 @csrf_exempt
 @login_required(login_url="login")
-def message_chat_info(request, user_id, request_user_id):
+def messageChatInfo(request, user_id, request_user_id):
     receive_user = User.objects.get(id=user_id)
     request_user = User.objects.get(id=request_user_id)
     user_list = [receive_user, request_user]
@@ -284,7 +283,7 @@ def message_chat_info(request, user_id, request_user_id):
 
 @csrf_exempt
 @login_required(login_url="login")
-def send_message(request, sender_id, receiver_id):
+def sendMessage(request, sender_id, receiver_id):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required"}, status=201)
     data = json.loads(request.body)
@@ -303,7 +302,7 @@ def send_message(request, sender_id, receiver_id):
     return message_chat_info(request, sender_id, receiver_id)
 
 
-def login_view(request):
+def loginView(request):
     if request.method == "POST":
         # Attempt to sign user in
         username = request.POST["username"]
@@ -323,7 +322,7 @@ def login_view(request):
         return render(request, "network/login.html")
 
 
-def logout_view(request):
+def logoutView(request):
     logout(request)
     return HttpResponseRedirect(reverse("login"))
 
