@@ -1,245 +1,34 @@
 {% extends "network/layout.html" %}
 {% load static %}
 
-
-
 {% block left-col %}
-<div class="card left-col-card my-1 overflow-auto" style="width: 15rem;">
-    <img class="card-img-top" src="{{weather_image_url}}" alt="Card image cap">
-    <div class="card-body weather-details">
-        <h5 class="city-title"></h5>
-        <p class="weather-text"></p>
-        <span class="temperature-text"></span><span>&deg;C</span>
-    </div>
-    <form class="weather-edit-form">
-        {% csrf_token %}
-        <input type="text" class="weather-edit-content"></input>
-        <input type="submit" class="hidden-btn">
-    </form>
-    <a class="card-btn btn btn-primary change-location-btn">Change Location</a>
-</div>
+{% include "network/include/left_col.html" %}
 {% endblock %}
-
-
-
-
-
-
-
-
 
 
 {% block body %}
-<form id="check-refresh"><input  type="hidden" name="visited" value=""></form>
-<input type="hidden" id="request-user" value={{request.user}}>
-<input type="hidden" id="request-user-id" value={{request.user.id}}>
-
-
-{% comment %} Profile view {% endcomment %}
-<div class="container border rounded" id="profile-view">
-  <div class="row">
-    <div class="col-4" class="user-image-col">
-        <img src="" class="user-image">
-        <p><div class="btn-link edit-user-image-btn">Edit Profile Picture</div></p>
-        <form class="edit-user-image" enctype="multipart/form-data"> 
-            <p><input type="file" class="image-input-fetch" name="avatar" enctype="multipart/form-data" accept="image/png, image/jpeg"></p>
-            <input type="submit" value="Change">
-        </form> 
-    </div>
-    <div class="col-8 profile-info">
-        <div class="profile-username"></div>
-        <div class="profile-email"></div>
-        <div class="profile-follow"></div>
-        <div class="btn-link follow-user-btn"></div>   
-        <div class="btn-link friend-request-btn"></div>
-        <div class="btn-link open-chat-btn">Chat</div>
-    </div>
-  </div>
-</div>
-
-
-{% comment %} Copy post prototype from the internet {% endcomment %}
-{% comment %} Indivual Post Blue Print {% endcomment %}
-<div id="post-stereotype" class="container">
-    <div class="post-element border rounded card">
-
-        <div class="post-header d-flex flex-row align-items-center wrapper"> <img class="post-poster-image circle" src="" width="60">
-            <div class="d-flex flex-column ml-2">
-                <span class="post-poster btn-link font-weight-bold"></span> <span class="btn-link delete-post-btn">Delete</span>
-                <small class="post-timestamp"></small> 
-            </div>
-        </div>
-        <div class="post-title"></div>
-        <img src="" class="post-image">                                                          
-
-        <div class="post-body">
-            <div class="post-content"></div>
-            <form class="post-edit-form">
-                {% csrf_token %}
-                <input type="text" class="edit-content"></input>
-                <input type="submit" class="hidden-btn">
-            </form>
-            <span class="post-edit-btn btn-link">Edit</span>
-        </div>
-
-        <hr>
-        <div class="row">
-            <div class="post-likes col-9 px-1"></div> 
-            <div class="btn-link like-btn col-2"></div>
-            <div class="col-1"></div>
-        </div>
-        <hr>
-
-        <div class="comment-views">
-            <div class="comment-element border">
-                <div class="comment-header"></div>
-                <div class="comment-body"></div>
-            </div>
-            <h6 class="comments-head mx-2">Comments</h6>
-        </div>
-        <form class="comment-form">
-            {% csrf_token %}
-            <input type="text" class="comment-content form-control" placeholder="Comment Your Thought">
-            <input type="submit" class="hidden-btn">
-        </form>
-    </div>
-</div>
-{% comment %} The above element get queried in inbox.js and cloneNode to multiple post {% endcomment %}
-{% comment %} Copy post prototype from the internet {% endcomment %}
-
-
-{% comment %} Profile display generaot {% endcomment %}
-<div id="profile-element-generator">
-    <div class="container profile-element border">
-    <div class="row">
-        <div class="col-4" class="user-image-col">
-            <img src="" class="user-image">
-        </div>
-        <div class="col-8">
-            <span>Username: </span><span class="btn-link profile-username"></span>
-            <div class="profile-email"></div>
-            <div class="profile-follow"></div>
-        </div>
-    </div>
-    </div>
-</div>
-
-
-{% comment %} New Post Form {% endcomment %}
-<div id="form-post" class="border">
-    <h5>New Post</h5> 
-    <form class="form-group" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type='text' id="title-form" placeholder="Title" class="form-control" label="">
-        <textarea type='textarea' id="content-form" placeholder="Write Your Though" class="form-control" label="" rows="2"></textarea>
-        <p><input type="file" id="image-form" name="image" enctype="multipart/form-data" accept="image/png, image/jpeg"></p>
-        <p><input class="btn btn-outline-primary" type='submit' value="Post" id="post-form-btn"></p>
-    </form>
-</div>
-
-
-<div id="all-posts"></div>
-
-<div id="follow-posts"></div>
-
-<div id="profile-posts"></div>
-
-<div id="search-posts"></div>
-
-
-{% comment %} Paginator button {% endcomment %}
-<nav aria-label="Page navigation example" id="nav-btn">
-  <ul class="pagination">
-    <li id="previous-page" class="page-item"><a class="page-link">Previous</a></li>
-    <li id="next-page" class="page-item"><a class="page-link">Next</a></li>
-  </ul>
-</nav>
+{% include "network/include/body.html" %}
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
 
 
 {% block right-col %}
-<div>Friend Request</div>
-<div class="message-col"></div>
-<br>
-<div>Friend List</div>
-<div class="friend-list">
-</div>
-
-
-{% comment %} Chat bubble copy from internet {% endcomment %}
-<div id="chat-bubble">
-    <div class="chat-container">
-        <div class="chat-header">
-            <div class="user-avatar" onclick="openChatBubble()">
-            <div class="img-container"><img src=""></div>
-            <div class="user-status-info"></div>
-        </div>
-    </div>
-
-    {% comment %} The chat body displaying each message div below {% endcomment %}
-    <div class="chat-body">
-    </div>
-
-    {% comment %} Div generator for displaying message {% endcomment %}
-    <div class="sender-other d-none">
-        <div class="user-avatar">
-            <div class="other-message"></div>
-        </div>
-    </div>
-    <div class="sender-request-user d-none">
-        <div class="my-message"></div>
-    </div>
-
-    {% comment %} Message form bar for typing {% endcomment %}
-    <div class="chat-footer">
-        <form class="chat-form">
-            <input class="chat-content" type="textarea" placeholder="Type a message...">
-            <input type="button" class="d-none">
-        </form>
-        <div class="chat-media">
-        </div>
-    </div>
-</div>
- {% comment %} Chat bubble copy from internet {% endcomment %}
-
-
-{% comment %} Request Message Generator {% endcomment %}
-<div class="friend-request-message border rounded p-2 m-1 d-none">
-    <div class="message-content"></div>
-    <div class="accept-request-btn d-inline btn btn-outline-primary">Accept</div>
-    <div class="decline-request-btn d-inline btn btn-outline-primary">Decline</div>
-<div>
+{% include "network/include/right_col.html" %}
 {% endblock %}
-
-
-
 
 
 {% block script %}
-    <script>
-      function openChatBubble() {
-        var element = document.getElementById("chat-bubble");
-        element.classList.toggle("open")
-      }
-    </script>
-    <script src="{% static 'network/fetch.js' %}"></script>
-    <script src="{% static 'network/ultility.js' %}"></script>
-    <script src="{% static 'network/message.js' %}"></script>
+<script>
+  function openChatBubble() {
+    var element = document.getElementById("chat-bubble");
+    element.classList.toggle("open")
+  }
+</script>
+<script src="{% static 'network/fetch.js' %}"></script>
+<script src="{% static 'network/ultility.js' %}"></script>
+<script src="{% static 'network/message.js' %}"></script>
 
-    {% comment %} <script src="{% static 'weather/fetch.js' %}"></script>
-    <script src="{% static 'weather/app.js' %}"></script> {% endcomment %}
+{% comment %} <script src="{% static 'weather/fetch.js' %}"></script>
+<script src="{% static 'weather/app.js' %}"></script> {% endcomment %}
 
-    <script src="{% static 'network/views.js' %}"></script>
+<script src="{% static 'network/views.js' %}"></script>
 {% endblock %}
-

@@ -1,0 +1,61 @@
+{% comment %} {% extends "network/layout.html" %}
+{% load static %} {% endcomment %}
+
+<div>Friend Request</div>
+<div class="message-col"></div>
+<br>
+<div>Friend List</div>
+<div class="friend-list"></div>
+
+
+
+{% comment %} Request Message Generator {% endcomment %}
+<div class="friend-request-message border rounded p-2 m-1 d-none">
+    <div class="message-content"></div>
+    <div class="accept-request-btn d-inline btn btn-outline-primary">Accept</div>
+    <div class="decline-request-btn d-inline btn btn-outline-primary">Decline</div>
+</div>
+
+
+
+{% comment %} Chat bubble copy from internet {% endcomment %}
+<div id="chat-bubble">
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="user-avatar" onclick="openChatBubble()">
+            <div class="img-container"><img src=""></div>
+            <div class="user-status-info"></div>
+        </div>
+    </div>
+
+    {% comment %} The chat body displaying each message div below {% endcomment %}
+    <div class="chat-body">
+    </div>
+
+    {% comment %} Div generator for displaying other user message {% endcomment %}
+    <div class="sender-other d-none">
+        <div class="user-avatar">
+            <div class="other-message"></div>
+        </div>
+    </div>
+
+    {% comment %} Div generator for displaying current user message {% endcomment %}
+    <div class="sender-request-user d-none">
+        <div class="my-message"></div>
+    </div>
+
+    {% comment %} Message form bar for typing {% endcomment %}
+    <div class="chat-footer">
+        <form class="chat-form">
+            <input class="chat-content" type="textarea" placeholder="Type a message...">
+            <input type="button" class="d-none">
+        </form>
+        <div class="chat-media">
+        </div>
+    </div>
+</div>
+
+
+
+
+

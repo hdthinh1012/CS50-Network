@@ -1,0 +1,17 @@
+{% comment %} {% extends "network/layout.html" %}
+{% load static %} {% endcomment %}
+
+{% comment %} <div class="card left-col-card my-1 overflow-auto" style="width: 15rem;">
+    <img class="card-img-top" src="{{weather_image_url}}" alt="Card image cap">
+    <div class="card-body weather-details">
+        <h5 class="city-title"></h5>
+        <p class="weather-text"></p>
+        <span class="temperature-text"></span><span>&deg;C</span>
+    </div>
+    <form class="weather-edit-form">
+        {% csrf_token %}
+        <input type="text" class="weather-edit-content"></input>
+        <input type="submit" class="hidden-btn">
+    </form>
+    <a class="card-btn btn btn-primary change-location-btn">Change Location</a>
+</div> {% endcomment %}

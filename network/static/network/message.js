@@ -51,7 +51,6 @@ function createFriendRequestDiv(friendRequest){
 function toggleFriendRequest(user_id, request_user_id, isFriendRequestSend){
     fetchToggleFriendRequest(user_id, request_user_id, isFriendRequestSend)
     .then(result => {
-        console.log(result);
         loadViews('profile-posts',default_page_id, user_id);
     })
     .catch()
@@ -60,7 +59,6 @@ function toggleFriendRequest(user_id, request_user_id, isFriendRequestSend){
 function unFriendRequest(user_id, request_user_id){
     fetchUnFriendRequest(user_id, request_user_id)
     .then(result => {
-        console.log(result);
         loadViews('profile-posts',default_page_id, user_id);
     })
     .catch()
@@ -69,19 +67,85 @@ function unFriendRequest(user_id, request_user_id){
 function friendRequestReply(requestor_id, requested_id, is_accept){
     fetchFriendRequestReply(requestor_id, requested_id, is_accept)
     .then(result => {
-        console.log(result);
         loadViews('all-posts',default_page_id);
         loadAllMessage();
     })
     .catch()
 }
 
+function displayChatBox(chat_box_info, user_id, user, request_user_id, request_user){
+    const connectionString = 'ws://' + window.location.host + '/ws/chat/' + user_id + '/' + request_user_id + '/';
+    
+    let chatbox = document.querySelector("#chat-bubble");
+    let chatbody = chatbox.querySelector(".chat-body");
+
+    chatbox.classList.remove("d-none");
+    chatbox.querySelector(".user-status-info").innerHTML = `${user}`;
+    let request_user_message_div = document.querySelector(".sender-request-user");
+    
+    /* Clear old chat body 
+     */
+    while(chatbody.firstChild){
+        chatbody.firstChild.remove();
+    }
+    let other_message_div = document.querySelector(".sender-other");
+    let messages = chat_box_info['messages'].reverse(); 
+
+    for (let message of messages){                                      
+        if (message.user == request_user){
+            let user_message = request_user_message_div.cloneNode(true);
+            user_message.classList.remove("d-none");
+            user_message.querySelector(".my-message").innerHTML = `${message.content}`;
+            chatbody.append(user_message);
+        }
+        else{
+            let other_message = other_message_div.cloneNode(true);
+            other_message.classList.remove("d-none");
+            other_message.querySelector(".other-message").innerHTML = `${message.content}`;
+            chatbody.append(other_message);
+        }
+    }
+
+    /* User type and submit chat in chatbox forms
+     */
+    chatbox.querySelector(".chat-form").onsubmit = function(event){
+        event.preventDefault();
+        fetchSendMessage(user_id, request_user_id, chatbox)
+        .then(result => {
+            document.querySelector("#chat-bubble").classList.remove("d-none");
+            displayChatBox(result, user_id, user, request_user_id, request_user);
+            this.reset();
+        })
+        .catch()
+    }
+}
+
+function chatBoxSetup(connectionString){
+    const chatSocket = new WebSocket(connectionString);
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        document.querySelector('#chat-log').value += (data.message + '\n');
+    };
+    
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+    
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+        messageInputDom.value = '';
+    };
+}
+
 function chatBoxRequest(user_id, user, request_user_id, request_user){
     fetchChatBox(user_id, request_user_id)
     .then(result => {
-        console.log(result);
         displayChatBox(result, user_id, user, request_user_id, request_user);
     })
     .catch()
 }
-

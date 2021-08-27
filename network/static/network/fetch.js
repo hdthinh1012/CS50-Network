@@ -101,8 +101,9 @@ async function fetchToggleLikes(post, is_liked){
 }
 
 
-// request_user_id: send message, user_id: receive message
-// Send / Cancel friend request
+/* request_user_id: send message, user_id: receive message
+ * Send / Cancel friend request
+ */
 async function fetchToggleFriendRequest(user_id, request_user_id, isFriendRequestSend){
     let response = await fetch(`toggle_friend_request/${request_user_id}/${user_id}`,{
         method: "PUT",
@@ -115,7 +116,8 @@ async function fetchToggleFriendRequest(user_id, request_user_id, isFriendReques
 }
 
 
-// Reply friend request
+/* Reply friend request
+ */
 async function fetchFriendRequestReply(requestor_id, requested_id, is_accept){
     let response = await fetch(`friend_request_reply`, {
         method: "POST",
@@ -143,6 +145,8 @@ async function fetchUnFriendRequest(user_id, request_user_id){
 }
 
 
+/* Fetch chat message app
+ */
 async function fetchChatBox(user_id, request_user_id){
     let response = await fetch(`message_chat_info/${user_id}/${request_user_id}`)
     let result = await response.json();
