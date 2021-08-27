@@ -74,23 +74,78 @@ function friendRequestReply(requestor_id, requested_id, is_accept){
 }
 
 function displayChatBox(chat_box_info, user_id, user, request_user_id, request_user){
-    const connectionString = 'ws://' + window.location.host + '/ws/chat/' + user_id + '/' + request_user_id + '/';
     
     let chatbox = document.querySelector("#chat-bubble");
-    let chatbody = chatbox.querySelector(".chat-body");
 
     chatbox.classList.remove("d-none");
     chatbox.querySelector(".user-status-info").innerHTML = `${user}`;
-    let request_user_message_div = document.querySelector(".sender-request-user");
+
+    let messages_list = chat_box_info['messages'].reverse(); 
+    chatBoxSetup(messages_list, user_id, user, request_user_id, request_user);
     
+}
+
+function chatBoxSetup(messages, user_id, user, request_user_id, request_user){
+    const user_1_id = (user_id < request_user_id) ? user_id : request_user_id;
+    const user_2_id = (user_id > request_user_id) ? user_id : request_user_id;
+    const connectionString = 'ws://' + window.location.host + '/ws/chat/' + user_1_id + '/' + user_2_id + '/';
+    const chatSocket = new WebSocket(connectionString);
+
+    let chatbox = document.querySelector("#chat-bubble");
+
+    chatbox.classList.remove("d-none");
+    chatbox.querySelector(".user-status-info").innerHTML = `${user}`;
+
+
+    /* e contains newest incoming message from either the current user or the other one
+     */
+    chatSocket.onopen = function open() {
+        console.log('WebSockets connection created.');
+        // on websocket open, send the START event.
+        displayChatMessage(messages, user_id, user, request_user_id, request_user);
+    };
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const incoming_message = data["chat_info"]; 
+        messages.push(incoming_message);
+        displayChatMessage(messages, user_id, user, request_user_id, request_user)
+    };
+    
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+    
+    /* User type and submit chat in chatbox forms
+     */
+    chatbox.querySelector(".chat-form").onsubmit = function(event){
+        event.preventDefault();
+        const messageInputDom = document.querySelector('.chat-content');
+        const message = messageInputDom.value;
+        fetchSendMessage(user_id, request_user_id, chatbox)
+        .then(result => {
+            document.querySelector("#chat-bubble").classList.remove("d-none");
+            chatSocket.send(JSON.stringify({
+                'sender_id': user_id,
+                'receiver_id': request_user_id,
+                'content': message
+            }));
+            this.reset();
+        })
+        .catch()
+    }
+}
+
+function displayChatMessage(messages, user_id, user, request_user_id, request_user){
+    let chatbox = document.querySelector("#chat-bubble");
+    let request_user_message_div = document.querySelector(".sender-request-user");
+    let other_message_div = document.querySelector(".sender-other");
+    let chatbody = chatbox.querySelector(".chat-body");
     /* Clear old chat body 
      */
     while(chatbody.firstChild){
         chatbody.firstChild.remove();
     }
-    let other_message_div = document.querySelector(".sender-other");
-    let messages = chat_box_info['messages'].reverse(); 
-
     for (let message of messages){                                      
         if (message.user == request_user){
             let user_message = request_user_message_div.cloneNode(true);
@@ -105,47 +160,4 @@ function displayChatBox(chat_box_info, user_id, user, request_user_id, request_u
             chatbody.append(other_message);
         }
     }
-
-    /* User type and submit chat in chatbox forms
-     */
-    chatbox.querySelector(".chat-form").onsubmit = function(event){
-        event.preventDefault();
-        fetchSendMessage(user_id, request_user_id, chatbox)
-        .then(result => {
-            document.querySelector("#chat-bubble").classList.remove("d-none");
-            displayChatBox(result, user_id, user, request_user_id, request_user);
-            this.reset();
-        })
-        .catch()
-    }
-}
-
-function chatBoxSetup(connectionString){
-    const chatSocket = new WebSocket(connectionString);
-
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        document.querySelector('#chat-log').value += (data.message + '\n');
-    };
-    
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
-    };
-    
-    document.querySelector('#chat-message-submit').onclick = function(e) {
-        const messageInputDom = document.querySelector('#chat-message-input');
-        const message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
-            'message': message
-        }));
-        messageInputDom.value = '';
-    };
-}
-
-function chatBoxRequest(user_id, user, request_user_id, request_user){
-    fetchChatBox(user_id, request_user_id)
-    .then(result => {
-        displayChatBox(result, user_id, user, request_user_id, request_user);
-    })
-    .catch()
 }
