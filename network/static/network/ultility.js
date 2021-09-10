@@ -299,10 +299,3 @@ function toggleLikes(event, type_post, post, is_liked, page_current){
     })
 }
 
-function chatBoxRequest(user_id, user, request_user_id, request_user){
-    fetchChatBox(user_id, request_user_id)
-    .then(result => {
-        displayChatBox(result, user_id, user, request_user_id, request_user);
-    })
-    .catch()
-}

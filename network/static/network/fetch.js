@@ -152,15 +152,3 @@ async function fetchChatBox(user_id, request_user_id){
     let result = await response.json();
     return result;
 }
-
-
-async function fetchSendMessage(receiver_id, sender_id, chatbox){
-    let response = await fetch(`send_message/${sender_id}/${receiver_id}`,{
-        method: "POST",
-        body: JSON.stringify({
-            content: document.querySelector('.chat-content').value,
-        })
-    })
-    let result = await response.json();
-    return result;
-}

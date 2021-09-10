@@ -26,5 +26,4 @@ urlpatterns = [
     path("toggle_friend_request/<int:requestor_id>/<int:requested_id>", views.toggleFriendRequest, name="create_friend_request"),
     path("friend_request_reply", views.friendRequestReply, name="friend_request_reply"),
     path("unfriend_request", views.unfriendRequest, name="unfriend_request"),
-    path("send_message/<int:sender_id>/<int:receiver_id>", views.sendMessage, name="send_message"),
 ]

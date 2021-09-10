@@ -73,6 +73,14 @@ function friendRequestReply(requestor_id, requested_id, is_accept){
     .catch()
 }
 
+function chatBoxRequest(user_id, user, request_user_id, request_user){
+    fetchChatBox(user_id, request_user_id)
+    .then(result => {
+        displayChatBox(result, user_id, user, request_user_id, request_user);
+    })
+    .catch()
+}
+
 function displayChatBox(chat_box_info, user_id, user, request_user_id, request_user){
     
     let chatbox = document.querySelector("#chat-bubble");
@@ -96,12 +104,12 @@ function chatBoxSetup(messages, user_id, user, request_user_id, request_user){
     chatbox.classList.remove("d-none");
     chatbox.querySelector(".user-status-info").innerHTML = `${user}`;
 
-
     /* e contains newest incoming message from either the current user or the other one
      */
     chatSocket.onopen = function open() {
         console.log('WebSockets connection created.');
-        // on websocket open, send the START event.
+        /* on websocket open, send the START event.
+         */
         displayChatMessage(messages, user_id, user, request_user_id, request_user);
     };
 
@@ -109,6 +117,10 @@ function chatBoxSetup(messages, user_id, user, request_user_id, request_user){
         const data = JSON.parse(e.data);
         const incoming_message = data["chat_info"]; 
         messages.push(incoming_message);
+        console.log(messages.length);
+        if (messages.length > 10){
+            messages.shift();
+        }
         displayChatMessage(messages, user_id, user, request_user_id, request_user)
     };
     
@@ -116,23 +128,20 @@ function chatBoxSetup(messages, user_id, user, request_user_id, request_user){
         console.error('Chat socket closed unexpectedly');
     };
     
-    /* User type and submit chat in chatbox forms
+    /* User type and submit chat in chatbox forms.
+     * request_user is the sender user
      */
     chatbox.querySelector(".chat-form").onsubmit = function(event){
         event.preventDefault();
         const messageInputDom = document.querySelector('.chat-content');
         const message = messageInputDom.value;
-        fetchSendMessage(user_id, request_user_id, chatbox)
-        .then(result => {
-            document.querySelector("#chat-bubble").classList.remove("d-none");
-            chatSocket.send(JSON.stringify({
-                'sender_id': user_id,
-                'receiver_id': request_user_id,
-                'content': message
-            }));
-            this.reset();
-        })
-        .catch()
+        console.log(request_user_id, user_id);
+        chatSocket.send(JSON.stringify({
+            'sender_id': request_user_id,
+            'receiver_id': user_id,
+            'content': message
+        }));
+        this.reset();
     }
 }
 

@@ -78,24 +78,3 @@ def messageChatInfo(request, user_id, request_user_id):
         chatbox = chatbox.filter(users=user)
     chatbox = chatbox.first()
     return JsonResponse(chatbox.serialize(), status=201)
-    
-
-@csrf_exempt
-@login_required(login_url="login")
-def sendMessage(request, sender_id, receiver_id):
-    if request.method != "POST":
-        return JsonResponse({"error": "POST request required"}, status=201)
-    data = json.loads(request.body)
-    content = data.get("content","")  
-    users = User.objects.filter(id__in=[sender_id, receiver_id])
-    sender = User.objects.get(pk=sender_id)
-    receiver = User.objects.get(pk=receiver_id)
-    user_list = [sender, receiver]
-    chatbox = ChatBox.objects.all()
-    for user in user_list:
-        chatbox = chatbox.filter(users=user)
-    chatbox = chatbox.first()
-    timestamp = datetime.datetime.now()
-    message = Message(user=sender, chatbox=chatbox, content=content, timestamp=timestamp)
-    message.save()
-    return messageChatInfo(request, sender_id, receiver_id)

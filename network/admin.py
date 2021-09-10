@@ -5,6 +5,7 @@ from django.contrib.auth.admin import UserAdmin
 # Register your models here.
 
 class UserCustomAdmin(admin.ModelAdmin):
+    list_display = ('id', 'username')
     filter_horizontal = ('follow',)
 
 class PostAdmin(admin.ModelAdmin):
