@@ -8,11 +8,10 @@ function loadAllMessage(){
         document.querySelector('.friend-list').firstChild.remove();
     }
     document.querySelector("#chat-bubble").classList.add("d-none");
-    friendRequestSetup();
     loadFriendRequest();
 }
 
-function friendRequestSetup(){
+function friendRequestSetup(user_id, request_user_id){
     let request_user_id = document.querySelector('#request-user-id').value;
     const connectionString = 'ws://' + window.location.host + '/ws/chat/' + request_user_id + '/';
     friendRequestSocket = new WebSocket(connectionString);

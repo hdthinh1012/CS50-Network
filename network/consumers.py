@@ -58,8 +58,8 @@ class ChatConsumer(WebsocketConsumer):
 
 class FriendRequestConsumer(WebsocketConsumer):
     def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['user_id']
-        self.room_group_name = 'request_room'
+        self.room_name = self.scope['url_route']['kwargs']['user_1_id'] + self.scope['url_route']['kwargs']['user_2_id']
+        self.room_group_name = 'request_room_%s' % self.room_name
 
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
