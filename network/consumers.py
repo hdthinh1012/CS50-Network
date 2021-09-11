@@ -87,17 +87,17 @@ class FriendRequestConsumer(WebsocketConsumer):
         sender = User.objects.get(pk=sender_id)
         receiver = User.objects.get(pk=receiver_id)
 
-
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name, {
-                'type': 'chatMessage'
+                **text_data_json,
+                'type': 'responseSignal',
             }
         )
 
     # Receive message from room group
-    def chatMessage(self, chat_info):
+    def responseSignal(self, request_info):
         # Send message to WebSocket
         self.send(text_data=json.dumps({
-            'chat_info': chat_info,
+            'chat_info': request_info,
         }))
