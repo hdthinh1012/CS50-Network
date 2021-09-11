@@ -54,3 +54,50 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'chat_info': chat_info,
         }))
+
+
+class FriendRequestConsumer(WebsocketConsumer):
+    def connect(self):
+        self.room_name = self.scope['url_route']['kwargs']['user_id']
+        self.room_group_name = 'request_room'
+
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
+        self.accept()
+
+    def disconnect(self, close_code):
+        # Leave room group
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+       # Receive message from WebSocket
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        sender_id = text_data_json['sender_id']
+        receiver_id = text_data_json['receiver_id']
+        content = text_data_json['content']
+        message_type = text_data_json['message_type']
+
+        users = User.objects.filter(id__in=[sender_id, receiver_id])
+        sender = User.objects.get(pk=sender_id)
+        receiver = User.objects.get(pk=receiver_id)
+
+
+        # Send message to room group
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name, {
+                'type': 'chatMessage'
+            }
+        )
+
+    # Receive message from room group
+    def chatMessage(self, chat_info):
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            'chat_info': chat_info,
+        }))
