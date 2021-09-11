@@ -1,4 +1,5 @@
 var chatSocket = null;
+let friendRequestSocket = null;
 
 function loadAllMessage(){
     while(document.querySelector('.message-col').firstChild){
@@ -11,12 +12,28 @@ function loadAllMessage(){
     loadFriendRequest();
 }
 
+function friendRequestSetup(user_id, request_user_id){
+    let request_user_id = document.querySelector('#request-user-id').value;
+    const connectionString = 'ws://' + window.location.host + '/ws/chat/' + request_user_id + '/';
+    friendRequestSocket = new WebSocket(connectionString);
+
+    friendRequestSocket.onopen = function open() {
+        console.log('Friend Request WebSockets connection created.');
+        /* on websocket open, send the START event.
+         */
+    };
+
+    friendRequestSocket.onclose = function(e){
+        console.log('Friend request socket closed unexpectedly');
+    }
+}
+
 function loadFriendRequest(){
     let request_user_id = document.querySelector('#request-user-id').value;
     fetchUserInfo(request_user_id)
     .then(user => {
-        friendRequests = user.friend_request_received;
-        for (friendRequest of friendRequests){
+        let friendRequests = user.friend_request_received;
+        for (let friendRequest of friendRequests){
             let friend_request_div = createFriendRequestDiv(friendRequest);
             console.log(friend_request_div);
             document.querySelector('.message-col').append(friend_request_div);
@@ -36,43 +53,66 @@ function loadFriendRequest(){
     })
 }
 
+// "Replace by WebSocket"
 function createFriendRequestDiv(friendRequest){
     let div_request_generator = document.querySelector(".friend-request-message");
     let div_friend_request = div_request_generator.cloneNode(true);
     div_friend_request.querySelector(".message-content").innerHTML = `${friendRequest.requestor} sends you a friend request`;
     div_friend_request.querySelector(".accept-request-btn").onclick = () => {
+        // "Replace by WebSocket"
         friendRequestReply(friendRequest.requestor_id, friendRequest.requested_id, true);
     };
     div_friend_request.querySelector(".decline-request-btn").onclick = () => {
+        // "Replace by WebSocket"
         friendRequestReply(friendRequest.requestor_id, friendRequest.requested_id, false);
     };
     div_friend_request.classList.remove('d-none');
     return div_friend_request;
 }
 
+// "Replace by WebSocket"
 function toggleFriendRequest(user_id, request_user_id, isFriendRequestSend){
-    fetchToggleFriendRequest(user_id, request_user_id, isFriendRequestSend)
-    .then(result => {
-        loadViews('profile-posts',default_page_id, user_id);
-    })
-    .catch()
+    // fetchToggleFriendRequest(user_id, request_user_id, isFriendRequestSend)
+    // .then(result => {
+    //     loadViews('profile-posts',default_page_id, user_id);
+    // })
+    // .catch()
+    friendRequestSocket.send(JSON.stringify({
+        'sender_id': request_user_id,
+        'receiver_id': user_id,
+        'message_type': isFriendRequestSend ? "FriendRequestAdd" : "FriendRequestCancel",
+    }));
 }
 
-function unFriendRequest(user_id, request_user_id){
-    fetchUnFriendRequest(user_id, request_user_id)
-    .then(result => {
-        loadViews('profile-posts',default_page_id, user_id);
-    })
-    .catch()
-}
-
+// "Replace by WebSocket"
 function friendRequestReply(requestor_id, requested_id, is_accept){
-    fetchFriendRequestReply(requestor_id, requested_id, is_accept)
-    .then(result => {
-        loadViews('all-posts',default_page_id);
-        loadAllMessage();
-    })
-    .catch()
+    // "Replace by WebSocket"
+    // fetchFriendRequestReply(requestor_id, requested_id, is_accept)
+    // .then(result => {
+    //     loadViews('all-posts',default_page_id);
+    //     loadAllMessage();
+    // })
+    // .catch()
+    // Requestor send the friend request, friend request reply sent by the requested
+    friendRequestSocket.send(JSON.stringify({
+        'sender_id': requested_id,
+        'receiver_id': requestor_id,
+        'message_type': is_accept ? "FriendRequestAccept" : "FriendRequestDenied",
+    }));
+}
+
+// "Replace by WebSocket"
+function unFriendRequest(user_id, request_user_id){
+    // fetchUnFriendRequest(user_id, request_user_id)
+    // .then(result => {
+    //     loadViews('profile-posts',default_page_id, user_id);
+    // })
+    // .catch()
+    friendRequestSocket.send(JSON.stringify({
+        'sender_id': request_user_id,
+        'receiver_id': user_id,
+        'message_type': "Unfriend",
+    }));
 }
 
 function chatBoxRequest(user_id, user, request_user_id, request_user){
