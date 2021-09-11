@@ -93,9 +93,10 @@ function friendRequestReply(requestor_id, requested_id, is_accept){
     //     loadAllMessage();
     // })
     // .catch()
+    // Requestor send the friend request, friend request reply sent by the requested
     friendRequestSocket.send(JSON.stringify({
-        'sender_id': request_user_id,
-        'receiver_id': user_id,
+        'sender_id': requested_id,
+        'receiver_id': requestor_id,
         'message_type': is_accept ? "FriendRequestAccept" : "FriendRequestDenied",
     }));
 }
