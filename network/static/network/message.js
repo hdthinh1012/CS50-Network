@@ -1,3 +1,5 @@
+var chatSocket = null;
+
 function loadAllMessage(){
     while(document.querySelector('.message-col').firstChild){
         document.querySelector('.message-col').firstChild.remove();
@@ -76,6 +78,10 @@ function friendRequestReply(requestor_id, requested_id, is_accept){
 function chatBoxRequest(user_id, user, request_user_id, request_user){
     fetchChatBox(user_id, request_user_id)
     .then(result => {
+        if (chatSocket != null){
+            chatSocket.close();
+            chatSocket = null;
+        }
         displayChatBox(result, user_id, user, request_user_id, request_user);
     })
     .catch()
@@ -97,7 +103,7 @@ function chatBoxSetup(messages, user_id, user, request_user_id, request_user){
     const user_1_id = (user_id < request_user_id) ? user_id : request_user_id;
     const user_2_id = (user_id > request_user_id) ? user_id : request_user_id;
     const connectionString = 'ws://' + window.location.host + '/ws/chat/' + user_1_id + '/' + user_2_id + '/';
-    const chatSocket = new WebSocket(connectionString);
+    chatSocket = new WebSocket(connectionString);
 
     let chatbox = document.querySelector("#chat-bubble");
 
