@@ -1,6 +1,4 @@
 const default_page_id = 1;
-/* This file is include in index.html which is only loaded after login
- */
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#post-stereotype').style.display = 'none';
     allEventListenser();
@@ -140,11 +138,9 @@ function viewProfile(user_id){
             document.querySelector('.friend-request-btn').onclick = () => {
                 window.history.pushState({id: '4', user_id}, "", "friend.html")
                 if(user_friends_username_list.includes(request_user)) {
-                    // "Replace by WebSocket"
                     unFriendRequest(user_id, request_user_id);
                 }
                 else {
-                    // "Replace by WebSocket"
                     toggleFriendRequest(user_id, request_user_id, user.isFriendRequestSend);
                 }
             }

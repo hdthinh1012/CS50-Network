@@ -100,7 +100,7 @@ async function fetchToggleLikes(post, is_liked){
     return result;
 }
 
-// "Replace by WebSocket"
+
 /* request_user_id: send message, user_id: receive message
  * Send / Cancel friend request
  */
@@ -115,7 +115,7 @@ async function fetchToggleFriendRequest(user_id, request_user_id, isFriendReques
     return result;
 }
 
-// "Replace by WebSocket"
+
 /* Reply friend request
  */
 async function fetchFriendRequestReply(requestor_id, requested_id, is_accept){
@@ -131,7 +131,7 @@ async function fetchFriendRequestReply(requestor_id, requested_id, is_accept){
     return result;
 }
 
-// "Replace by WebSocket"
+
 async function fetchUnFriendRequest(user_id, request_user_id){
     let response = await fetch(`unfriend_request`, {
         method: "POST",

@@ -11,7 +11,6 @@ import json
 import datetime
 from ..models import *
 
-# "Replace by FriendRequestConsumer"
 @csrf_exempt
 @login_required(login_url="login")
 def toggleFriendRequest(request, requestor_id, requested_id):
@@ -29,7 +28,7 @@ def toggleFriendRequest(request, requestor_id, requested_id):
         new_friend_request.save() 
     return JsonResponse({"message": "Toggle friend request success"}, status=201)
 
-# "Replace by FriendRequestConsumer"
+
 @csrf_exempt
 @login_required(login_url="login")
 def friendRequestReply(request):
@@ -52,7 +51,7 @@ def friendRequestReply(request):
     friendRequest.delete() 
     return JsonResponse({"message": "Reply friend request success"}, status=201)
         
-# "Replace by FriendRequestConsumer"
+
 @csrf_exempt
 @login_required(login_url="login")
 def unfriendRequest(request):
